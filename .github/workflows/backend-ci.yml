@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -23,8 +23,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install fastapi uvicorn sqlalchemy pydantic python-multipart
 
+      - name: Verify backend imports
+        run: |
+          cd backend
+          python - <<EOF
+          from main import app
+          print("✅ Backend imported successfully")
+          EOF
+
       - name: Run backend (test only)
         run: |
+          cd backend
           uvicorn main:app --host 127.0.0.1 --port 8000 &
           sleep 5
           curl http://127.0.0.1:8000
+
